@@ -28,6 +28,8 @@ class Config:
     #     "DATABASE_URL", f"sqlite:///{BASE_DIR / 'iconcur.db'}"
     # )
 
+    print("hello")
+
     SQLALCHEMY_DATABASE_URI = os.environ.get(
         "DATABASE_URL", f"postgresql+psycopg2://{postgres_username}:{postgres_password}@localhost/{postgres_db}"
     )
