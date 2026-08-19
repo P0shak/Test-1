@@ -1,0 +1,15 @@
+{
+	"name": "adbdatafactory1",
+	"properties": {
+		"trustModeClaimForMi": {
+			"value": "Disabled",
+			"editable": true
+		}
+	},
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "04d29786-e0c9-45c4-b90b-c1e80c6574b0",
+		"tenantId": "a99ba8a6-5009-47d8-a9b8-5afa2024c4fd"
+	}
+}
