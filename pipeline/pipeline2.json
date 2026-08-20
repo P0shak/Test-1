@@ -112,7 +112,7 @@
 											"type": "Expression"
 										},
 										"fileName": {
-											"value": "@{split(item().TargetPath, '/')[1]}.csv",
+											"value": "@{split(item().TargetPath, '/')[1]}.@{pipeline().parameters.fileExtension}",
 											"type": "Expression"
 										}
 									}
@@ -123,6 +123,11 @@
 				}
 			}
 		],
+		"parameters": {
+			"fileExtension": {
+				"type": "string"
+			}
+		},
 		"annotations": []
 	}
 }
