@@ -19,6 +19,227 @@
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
 		},
-		"schema": []
+		"schema": [
+			{
+				"name": "id",
+				"type": "String"
+			},
+			{
+				"name": "firstName",
+				"type": "String"
+			},
+			{
+				"name": "lastName",
+				"type": "String"
+			},
+			{
+				"name": "maidenName",
+				"type": "String"
+			},
+			{
+				"name": "age",
+				"type": "String"
+			},
+			{
+				"name": "gender",
+				"type": "String"
+			},
+			{
+				"name": "email",
+				"type": "String"
+			},
+			{
+				"name": "phone",
+				"type": "String"
+			},
+			{
+				"name": "username",
+				"type": "String"
+			},
+			{
+				"name": "password",
+				"type": "String"
+			},
+			{
+				"name": "birthDate",
+				"type": "String"
+			},
+			{
+				"name": "image",
+				"type": "String"
+			},
+			{
+				"name": "bloodGroup",
+				"type": "String"
+			},
+			{
+				"name": "height",
+				"type": "String"
+			},
+			{
+				"name": "weight",
+				"type": "String"
+			},
+			{
+				"name": "eyeColor",
+				"type": "String"
+			},
+			{
+				"name": "color",
+				"type": "String"
+			},
+			{
+				"name": "type",
+				"type": "String"
+			},
+			{
+				"name": "ip",
+				"type": "String"
+			},
+			{
+				"name": "users'][0]['address_address",
+				"type": "String"
+			},
+			{
+				"name": "users'][0]['address_city",
+				"type": "String"
+			},
+			{
+				"name": "users'][0]['address_state",
+				"type": "String"
+			},
+			{
+				"name": "users'][0]['address_stateCode",
+				"type": "String"
+			},
+			{
+				"name": "users'][0]['address_postalCode",
+				"type": "String"
+			},
+			{
+				"name": "users'][0]['address_coordinates_lat",
+				"type": "String"
+			},
+			{
+				"name": "users'][0]['address_coordinates_lng",
+				"type": "String"
+			},
+			{
+				"name": "users'][0]['address_country",
+				"type": "String"
+			},
+			{
+				"name": "macAddress",
+				"type": "String"
+			},
+			{
+				"name": "university",
+				"type": "String"
+			},
+			{
+				"name": "cardExpire",
+				"type": "String"
+			},
+			{
+				"name": "cardNumber",
+				"type": "String"
+			},
+			{
+				"name": "cardType",
+				"type": "String"
+			},
+			{
+				"name": "currency",
+				"type": "String"
+			},
+			{
+				"name": "iban",
+				"type": "String"
+			},
+			{
+				"name": "department",
+				"type": "String"
+			},
+			{
+				"name": "name",
+				"type": "String"
+			},
+			{
+				"name": "title",
+				"type": "String"
+			},
+			{
+				"name": "users'][0]['company_address_address",
+				"type": "String"
+			},
+			{
+				"name": "users'][0]['company_address_city",
+				"type": "String"
+			},
+			{
+				"name": "users'][0]['company_address_state",
+				"type": "String"
+			},
+			{
+				"name": "users'][0]['company_address_stateCode",
+				"type": "String"
+			},
+			{
+				"name": "users'][0]['company_address_postalCode",
+				"type": "String"
+			},
+			{
+				"name": "users'][0]['company_address_coordinates_lat",
+				"type": "String"
+			},
+			{
+				"name": "users'][0]['company_address_coordinates_lng",
+				"type": "String"
+			},
+			{
+				"name": "users'][0]['company_address_country",
+				"type": "String"
+			},
+			{
+				"name": "ein",
+				"type": "String"
+			},
+			{
+				"name": "ssn",
+				"type": "String"
+			},
+			{
+				"name": "userAgent",
+				"type": "String"
+			},
+			{
+				"name": "coin",
+				"type": "String"
+			},
+			{
+				"name": "wallet",
+				"type": "String"
+			},
+			{
+				"name": "network",
+				"type": "String"
+			},
+			{
+				"name": "role",
+				"type": "String"
+			},
+			{
+				"name": "total",
+				"type": "String"
+			},
+			{
+				"name": "skip",
+				"type": "String"
+			},
+			{
+				"name": "limit",
+				"type": "String"
+			}
+		]
 	}
 }
