@@ -1,0 +1,580 @@
+{
+	"name": "pl_ingest_orders_incremental",
+	"properties": {
+		"activities": [
+			{
+				"name": "cp_api_to_json",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET"
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings",
+							"copyBehavior": "PreserveHierarchy"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_users_dummyjson",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "api_to_json_sink_dummyjson",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "cp_json_to_csv",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "cp_api_to_json",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings",
+							"copyBehavior": "PreserveHierarchy"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "['id']"
+								},
+								"sink": {
+									"name": "id"
+								}
+							},
+							{
+								"source": {
+									"path": "['firstName']"
+								},
+								"sink": {
+									"name": "firstName"
+								}
+							},
+							{
+								"source": {
+									"path": "['lastName']"
+								},
+								"sink": {
+									"name": "lastName"
+								}
+							},
+							{
+								"source": {
+									"path": "['maidenName']"
+								},
+								"sink": {
+									"name": "maidenName"
+								}
+							},
+							{
+								"source": {
+									"path": "['age']"
+								},
+								"sink": {
+									"name": "age"
+								}
+							},
+							{
+								"source": {
+									"path": "['gender']"
+								},
+								"sink": {
+									"name": "gender"
+								}
+							},
+							{
+								"source": {
+									"path": "['email']"
+								},
+								"sink": {
+									"name": "email"
+								}
+							},
+							{
+								"source": {
+									"path": "['phone']"
+								},
+								"sink": {
+									"name": "phone"
+								}
+							},
+							{
+								"source": {
+									"path": "['username']"
+								},
+								"sink": {
+									"name": "username"
+								}
+							},
+							{
+								"source": {
+									"path": "['password']"
+								},
+								"sink": {
+									"name": "password"
+								}
+							},
+							{
+								"source": {
+									"path": "['birthDate']"
+								},
+								"sink": {
+									"name": "birthDate"
+								}
+							},
+							{
+								"source": {
+									"path": "['image']"
+								},
+								"sink": {
+									"name": "image"
+								}
+							},
+							{
+								"source": {
+									"path": "['bloodGroup']"
+								},
+								"sink": {
+									"name": "bloodGroup"
+								}
+							},
+							{
+								"source": {
+									"path": "['height']"
+								},
+								"sink": {
+									"name": "height"
+								}
+							},
+							{
+								"source": {
+									"path": "['weight']"
+								},
+								"sink": {
+									"name": "weight"
+								}
+							},
+							{
+								"source": {
+									"path": "['eyeColor']"
+								},
+								"sink": {
+									"name": "eyeColor"
+								}
+							},
+							{
+								"source": {
+									"path": "['hair']['color']"
+								},
+								"sink": {
+									"name": "color"
+								}
+							},
+							{
+								"source": {
+									"path": "['hair']['type']"
+								},
+								"sink": {
+									"name": "type"
+								}
+							},
+							{
+								"source": {
+									"path": "['ip']"
+								},
+								"sink": {
+									"name": "ip"
+								}
+							},
+							{
+								"source": {
+									"path": "['address']['address']"
+								},
+								"sink": {
+									"name": "users'][0]['address_address"
+								}
+							},
+							{
+								"source": {
+									"path": "['address']['city']"
+								},
+								"sink": {
+									"name": "users'][0]['address_city"
+								}
+							},
+							{
+								"source": {
+									"path": "['address']['state']"
+								},
+								"sink": {
+									"name": "users'][0]['address_state"
+								}
+							},
+							{
+								"source": {
+									"path": "['address']['stateCode']"
+								},
+								"sink": {
+									"name": "users'][0]['address_stateCode"
+								}
+							},
+							{
+								"source": {
+									"path": "['address']['postalCode']"
+								},
+								"sink": {
+									"name": "users'][0]['address_postalCode"
+								}
+							},
+							{
+								"source": {
+									"path": "['address']['coordinates']['lat']"
+								},
+								"sink": {
+									"name": "users'][0]['address_coordinates_lat"
+								}
+							},
+							{
+								"source": {
+									"path": "['address']['coordinates']['lng']"
+								},
+								"sink": {
+									"name": "users'][0]['address_coordinates_lng"
+								}
+							},
+							{
+								"source": {
+									"path": "['address']['country']"
+								},
+								"sink": {
+									"name": "users'][0]['address_country"
+								}
+							},
+							{
+								"source": {
+									"path": "['macAddress']"
+								},
+								"sink": {
+									"name": "macAddress"
+								}
+							},
+							{
+								"source": {
+									"path": "['university']"
+								},
+								"sink": {
+									"name": "university"
+								}
+							},
+							{
+								"source": {
+									"path": "['bank']['cardExpire']"
+								},
+								"sink": {
+									"name": "cardExpire"
+								}
+							},
+							{
+								"source": {
+									"path": "['bank']['cardNumber']"
+								},
+								"sink": {
+									"name": "cardNumber"
+								}
+							},
+							{
+								"source": {
+									"path": "['bank']['cardType']"
+								},
+								"sink": {
+									"name": "cardType"
+								}
+							},
+							{
+								"source": {
+									"path": "['bank']['currency']"
+								},
+								"sink": {
+									"name": "currency"
+								}
+							},
+							{
+								"source": {
+									"path": "['bank']['iban']"
+								},
+								"sink": {
+									"name": "iban"
+								}
+							},
+							{
+								"source": {
+									"path": "['company']['department']"
+								},
+								"sink": {
+									"name": "department"
+								}
+							},
+							{
+								"source": {
+									"path": "['company']['name']"
+								},
+								"sink": {
+									"name": "name"
+								}
+							},
+							{
+								"source": {
+									"path": "['company']['title']"
+								},
+								"sink": {
+									"name": "title"
+								}
+							},
+							{
+								"source": {
+									"path": "['company']['address']['address']"
+								},
+								"sink": {
+									"name": "users'][0]['company_address_address"
+								}
+							},
+							{
+								"source": {
+									"path": "['company']['address']['city']"
+								},
+								"sink": {
+									"name": "users'][0]['company_address_city"
+								}
+							},
+							{
+								"source": {
+									"path": "['company']['address']['state']"
+								},
+								"sink": {
+									"name": "users'][0]['company_address_state"
+								}
+							},
+							{
+								"source": {
+									"path": "['company']['address']['stateCode']"
+								},
+								"sink": {
+									"name": "users'][0]['company_address_stateCode"
+								}
+							},
+							{
+								"source": {
+									"path": "['company']['address']['postalCode']"
+								},
+								"sink": {
+									"name": "users'][0]['company_address_postalCode"
+								}
+							},
+							{
+								"source": {
+									"path": "['company']['address']['coordinates']['lat']"
+								},
+								"sink": {
+									"name": "users'][0]['company_address_coordinates_lat"
+								}
+							},
+							{
+								"source": {
+									"path": "['company']['address']['coordinates']['lng']"
+								},
+								"sink": {
+									"name": "users'][0]['company_address_coordinates_lng"
+								}
+							},
+							{
+								"source": {
+									"path": "['company']['address']['country']"
+								},
+								"sink": {
+									"name": "users'][0]['company_address_country"
+								}
+							},
+							{
+								"source": {
+									"path": "['ein']"
+								},
+								"sink": {
+									"name": "ein"
+								}
+							},
+							{
+								"source": {
+									"path": "['ssn']"
+								},
+								"sink": {
+									"name": "ssn"
+								}
+							},
+							{
+								"source": {
+									"path": "['userAgent']"
+								},
+								"sink": {
+									"name": "userAgent"
+								}
+							},
+							{
+								"source": {
+									"path": "['crypto']['coin']"
+								},
+								"sink": {
+									"name": "coin"
+								}
+							},
+							{
+								"source": {
+									"path": "['crypto']['wallet']"
+								},
+								"sink": {
+									"name": "wallet"
+								}
+							},
+							{
+								"source": {
+									"path": "['crypto']['network']"
+								},
+								"sink": {
+									"name": "network"
+								}
+							},
+							{
+								"source": {
+									"path": "['role']"
+								},
+								"sink": {
+									"name": "role"
+								}
+							},
+							{
+								"source": {
+									"path": "$['total']"
+								},
+								"sink": {
+									"name": "total"
+								}
+							},
+							{
+								"source": {
+									"path": "$['skip']"
+								},
+								"sink": {
+									"name": "skip"
+								}
+							},
+							{
+								"source": {
+									"path": "$['limit']"
+								},
+								"sink": {
+									"name": "limit"
+								}
+							}
+						],
+						"collectionReference": "$['users']"
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "api_to_json_sink_dummyjson",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_json_to_csv",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Data flow1",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"annotations": []
+	}
+}

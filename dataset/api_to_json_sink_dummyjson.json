@@ -1,0 +1,20 @@
+{
+	"name": "api_to_json_sink_dummyjson",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "users.json",
+				"folderPath": "bronze/users",
+				"container": "adb"
+			}
+		},
+		"schema": {}
+	}
+}

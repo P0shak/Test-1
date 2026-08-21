@@ -1,0 +1,18 @@
+{
+	"name": "ds_users_dummyjson",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_dummyjson",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": "users"
+			}
+		},
+		"schema": {}
+	}
+}
