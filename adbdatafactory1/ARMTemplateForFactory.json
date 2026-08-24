@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'AzureSqlDatabase1'"
 		},
+		"AzureSqlDatabaseAllTables_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'AzureSqlDatabaseAllTables'"
+		},
 		"AzureSqlDatabase1_properties_typeProperties_server": {
 			"type": "string",
 			"defaultValue": "adbsagarsoft.database.windows.net"
@@ -26,6 +30,22 @@
 		"AzureSqlDatabase1_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "adbadmin"
+		},
+		"AzureSqlDatabaseAllTables_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "adbsagarsoft.database.windows.net"
+		},
+		"AzureSqlDatabaseAllTables_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "adb-database"
+		},
+		"AzureSqlDatabaseAllTables_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adbadmin"
+		},
+		"ls_dummyjson_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://dummyjson.com"
 		}
 	},
 	"variables": {
@@ -249,6 +269,697 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/pl_ingest_orders_incremental')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "cp_api_to_json",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "GET"
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings",
+									"copyBehavior": "PreserveHierarchy"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "ds_users_dummyjson",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "api_to_json_sink_dummyjson",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "cp_json_to_csv",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "cp_api_to_json",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings",
+									"copyBehavior": "PreserveHierarchy"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "[['id']"
+										},
+										"sink": {
+											"name": "id"
+										}
+									},
+									{
+										"source": {
+											"path": "[['firstName']"
+										},
+										"sink": {
+											"name": "firstName"
+										}
+									},
+									{
+										"source": {
+											"path": "[['lastName']"
+										},
+										"sink": {
+											"name": "lastName"
+										}
+									},
+									{
+										"source": {
+											"path": "[['maidenName']"
+										},
+										"sink": {
+											"name": "maidenName"
+										}
+									},
+									{
+										"source": {
+											"path": "[['age']"
+										},
+										"sink": {
+											"name": "age"
+										}
+									},
+									{
+										"source": {
+											"path": "[['gender']"
+										},
+										"sink": {
+											"name": "gender"
+										}
+									},
+									{
+										"source": {
+											"path": "[['email']"
+										},
+										"sink": {
+											"name": "email"
+										}
+									},
+									{
+										"source": {
+											"path": "[['phone']"
+										},
+										"sink": {
+											"name": "phone"
+										}
+									},
+									{
+										"source": {
+											"path": "[['username']"
+										},
+										"sink": {
+											"name": "username"
+										}
+									},
+									{
+										"source": {
+											"path": "[['password']"
+										},
+										"sink": {
+											"name": "password"
+										}
+									},
+									{
+										"source": {
+											"path": "[['birthDate']"
+										},
+										"sink": {
+											"name": "birthDate"
+										}
+									},
+									{
+										"source": {
+											"path": "[['image']"
+										},
+										"sink": {
+											"name": "image"
+										}
+									},
+									{
+										"source": {
+											"path": "[['bloodGroup']"
+										},
+										"sink": {
+											"name": "bloodGroup"
+										}
+									},
+									{
+										"source": {
+											"path": "[['height']"
+										},
+										"sink": {
+											"name": "height"
+										}
+									},
+									{
+										"source": {
+											"path": "[['weight']"
+										},
+										"sink": {
+											"name": "weight"
+										}
+									},
+									{
+										"source": {
+											"path": "[['eyeColor']"
+										},
+										"sink": {
+											"name": "eyeColor"
+										}
+									},
+									{
+										"source": {
+											"path": "[['hair']['color']"
+										},
+										"sink": {
+											"name": "color"
+										}
+									},
+									{
+										"source": {
+											"path": "[['hair']['type']"
+										},
+										"sink": {
+											"name": "type"
+										}
+									},
+									{
+										"source": {
+											"path": "[['ip']"
+										},
+										"sink": {
+											"name": "ip"
+										}
+									},
+									{
+										"source": {
+											"path": "[['address']['address']"
+										},
+										"sink": {
+											"name": "users'][0]['address_address"
+										}
+									},
+									{
+										"source": {
+											"path": "[['address']['city']"
+										},
+										"sink": {
+											"name": "users'][0]['address_city"
+										}
+									},
+									{
+										"source": {
+											"path": "[['address']['state']"
+										},
+										"sink": {
+											"name": "users'][0]['address_state"
+										}
+									},
+									{
+										"source": {
+											"path": "[['address']['stateCode']"
+										},
+										"sink": {
+											"name": "users'][0]['address_stateCode"
+										}
+									},
+									{
+										"source": {
+											"path": "[['address']['postalCode']"
+										},
+										"sink": {
+											"name": "users'][0]['address_postalCode"
+										}
+									},
+									{
+										"source": {
+											"path": "[['address']['coordinates']['lat']"
+										},
+										"sink": {
+											"name": "users'][0]['address_coordinates_lat"
+										}
+									},
+									{
+										"source": {
+											"path": "[['address']['coordinates']['lng']"
+										},
+										"sink": {
+											"name": "users'][0]['address_coordinates_lng"
+										}
+									},
+									{
+										"source": {
+											"path": "[['address']['country']"
+										},
+										"sink": {
+											"name": "users'][0]['address_country"
+										}
+									},
+									{
+										"source": {
+											"path": "[['macAddress']"
+										},
+										"sink": {
+											"name": "macAddress"
+										}
+									},
+									{
+										"source": {
+											"path": "[['university']"
+										},
+										"sink": {
+											"name": "university"
+										}
+									},
+									{
+										"source": {
+											"path": "[['bank']['cardExpire']"
+										},
+										"sink": {
+											"name": "cardExpire"
+										}
+									},
+									{
+										"source": {
+											"path": "[['bank']['cardNumber']"
+										},
+										"sink": {
+											"name": "cardNumber"
+										}
+									},
+									{
+										"source": {
+											"path": "[['bank']['cardType']"
+										},
+										"sink": {
+											"name": "cardType"
+										}
+									},
+									{
+										"source": {
+											"path": "[['bank']['currency']"
+										},
+										"sink": {
+											"name": "currency"
+										}
+									},
+									{
+										"source": {
+											"path": "[['bank']['iban']"
+										},
+										"sink": {
+											"name": "iban"
+										}
+									},
+									{
+										"source": {
+											"path": "[['company']['department']"
+										},
+										"sink": {
+											"name": "department"
+										}
+									},
+									{
+										"source": {
+											"path": "[['company']['name']"
+										},
+										"sink": {
+											"name": "name"
+										}
+									},
+									{
+										"source": {
+											"path": "[['company']['title']"
+										},
+										"sink": {
+											"name": "title"
+										}
+									},
+									{
+										"source": {
+											"path": "[['company']['address']['address']"
+										},
+										"sink": {
+											"name": "users'][0]['company_address_address"
+										}
+									},
+									{
+										"source": {
+											"path": "[['company']['address']['city']"
+										},
+										"sink": {
+											"name": "users'][0]['company_address_city"
+										}
+									},
+									{
+										"source": {
+											"path": "[['company']['address']['state']"
+										},
+										"sink": {
+											"name": "users'][0]['company_address_state"
+										}
+									},
+									{
+										"source": {
+											"path": "[['company']['address']['stateCode']"
+										},
+										"sink": {
+											"name": "users'][0]['company_address_stateCode"
+										}
+									},
+									{
+										"source": {
+											"path": "[['company']['address']['postalCode']"
+										},
+										"sink": {
+											"name": "users'][0]['company_address_postalCode"
+										}
+									},
+									{
+										"source": {
+											"path": "[['company']['address']['coordinates']['lat']"
+										},
+										"sink": {
+											"name": "users'][0]['company_address_coordinates_lat"
+										}
+									},
+									{
+										"source": {
+											"path": "[['company']['address']['coordinates']['lng']"
+										},
+										"sink": {
+											"name": "users'][0]['company_address_coordinates_lng"
+										}
+									},
+									{
+										"source": {
+											"path": "[['company']['address']['country']"
+										},
+										"sink": {
+											"name": "users'][0]['company_address_country"
+										}
+									},
+									{
+										"source": {
+											"path": "[['ein']"
+										},
+										"sink": {
+											"name": "ein"
+										}
+									},
+									{
+										"source": {
+											"path": "[['ssn']"
+										},
+										"sink": {
+											"name": "ssn"
+										}
+									},
+									{
+										"source": {
+											"path": "[['userAgent']"
+										},
+										"sink": {
+											"name": "userAgent"
+										}
+									},
+									{
+										"source": {
+											"path": "[['crypto']['coin']"
+										},
+										"sink": {
+											"name": "coin"
+										}
+									},
+									{
+										"source": {
+											"path": "[['crypto']['wallet']"
+										},
+										"sink": {
+											"name": "wallet"
+										}
+									},
+									{
+										"source": {
+											"path": "[['crypto']['network']"
+										},
+										"sink": {
+											"name": "network"
+										}
+									},
+									{
+										"source": {
+											"path": "[['role']"
+										},
+										"sink": {
+											"name": "role"
+										}
+									},
+									{
+										"source": {
+											"path": "$['total']"
+										},
+										"sink": {
+											"name": "total"
+										}
+									},
+									{
+										"source": {
+											"path": "$['skip']"
+										},
+										"sink": {
+											"name": "skip"
+										}
+									},
+									{
+										"source": {
+											"path": "$['limit']"
+										},
+										"sink": {
+											"name": "limit"
+										}
+									}
+								],
+								"collectionReference": "$['users']"
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "api_to_json_sink_dummyjson",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_json_to_csv",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "df_csv_to_sql",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "Script1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "dataflow1",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"green": {},
+									"brown": {},
+									"blue": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					},
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "cp_json_to_csv",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "AzureSqlDatabase1",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": "TRUNCATE TABLE dbo.Blue;\nTRUNCATE TABLE dbo.Brown;\nTRUNCATE TABLE dbo.Green;\nTRUNCATE TABLE dbo.Hazel;"
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_users_dummyjson')]",
+				"[concat(variables('factoryId'), '/datasets/api_to_json_sink_dummyjson')]",
+				"[concat(variables('factoryId'), '/datasets/ds_json_to_csv')]",
+				"[concat(variables('factoryId'), '/dataflows/dataflow1')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/poshak')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Lookup1",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "metadatalookupdataset",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/metadatalookupdataset')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzureSqlTable1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -304,6 +1015,24 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTable2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabaseAllTables",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabaseAllTables')]"
 			]
 		},
 		{
@@ -363,6 +1092,35 @@
 						"type": "String"
 					}
 				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DelimitedText2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "users.json",
+						"folderPath": "bronze/users",
+						"container": "adb"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
@@ -434,6 +1192,1317 @@
 							"value": "@dataset().folder",
 							"type": "Expression"
 						},
+						"container": "adb"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/api_to_json_sink_dummyjson')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "users.json",
+						"folderPath": "bronze/users",
+						"container": "adb"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/blueeyes')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "firstName",
+						"type": "varchar"
+					},
+					{
+						"name": "lastName",
+						"type": "varchar"
+					},
+					{
+						"name": "maidenName",
+						"type": "varchar"
+					},
+					{
+						"name": "age",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "gender",
+						"type": "varchar"
+					},
+					{
+						"name": "email",
+						"type": "varchar"
+					},
+					{
+						"name": "phone",
+						"type": "varchar"
+					},
+					{
+						"name": "username",
+						"type": "varchar"
+					},
+					{
+						"name": "password",
+						"type": "varchar"
+					},
+					{
+						"name": "birthDate",
+						"type": "varchar"
+					},
+					{
+						"name": "image",
+						"type": "varchar"
+					},
+					{
+						"name": "bloodGroup",
+						"type": "varchar"
+					},
+					{
+						"name": "height",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 2
+					},
+					{
+						"name": "weight",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 2
+					},
+					{
+						"name": "eyeColor",
+						"type": "varchar"
+					},
+					{
+						"name": "color",
+						"type": "varchar"
+					},
+					{
+						"name": "type",
+						"type": "varchar"
+					},
+					{
+						"name": "ip",
+						"type": "varchar"
+					},
+					{
+						"name": "address_address",
+						"type": "varchar"
+					},
+					{
+						"name": "address_city",
+						"type": "varchar"
+					},
+					{
+						"name": "address_state",
+						"type": "varchar"
+					},
+					{
+						"name": "address_stateCode",
+						"type": "varchar"
+					},
+					{
+						"name": "address_postalCode",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "address_coordinates_lat",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 6
+					},
+					{
+						"name": "address_coordinates_lng",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 6
+					},
+					{
+						"name": "address_country",
+						"type": "varchar"
+					},
+					{
+						"name": "macAddress",
+						"type": "varchar"
+					},
+					{
+						"name": "university",
+						"type": "varchar"
+					},
+					{
+						"name": "cardExpire",
+						"type": "varchar"
+					},
+					{
+						"name": "cardNumber",
+						"type": "varchar"
+					},
+					{
+						"name": "cardType",
+						"type": "varchar"
+					},
+					{
+						"name": "currency",
+						"type": "varchar"
+					},
+					{
+						"name": "iban",
+						"type": "varchar"
+					},
+					{
+						"name": "company_department",
+						"type": "varchar"
+					},
+					{
+						"name": "company_name",
+						"type": "varchar"
+					},
+					{
+						"name": "company_title",
+						"type": "varchar"
+					},
+					{
+						"name": "company_address_address",
+						"type": "varchar"
+					},
+					{
+						"name": "company_address_city",
+						"type": "varchar"
+					},
+					{
+						"name": "company_address_state",
+						"type": "varchar"
+					},
+					{
+						"name": "company_address_stateCode",
+						"type": "varchar"
+					},
+					{
+						"name": "company_address_postalCode",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "company_address_coordinates_lat",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 6
+					},
+					{
+						"name": "company_address_coordinates_lng",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 6
+					},
+					{
+						"name": "company_address_country",
+						"type": "varchar"
+					},
+					{
+						"name": "ein",
+						"type": "varchar"
+					},
+					{
+						"name": "ssn",
+						"type": "varchar"
+					},
+					{
+						"name": "userAgent",
+						"type": "varchar"
+					},
+					{
+						"name": "coin",
+						"type": "varchar"
+					},
+					{
+						"name": "wallet",
+						"type": "varchar"
+					},
+					{
+						"name": "network",
+						"type": "varchar"
+					},
+					{
+						"name": "role",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Blue"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/browneyes')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "firstName",
+						"type": "varchar"
+					},
+					{
+						"name": "lastName",
+						"type": "varchar"
+					},
+					{
+						"name": "maidenName",
+						"type": "varchar"
+					},
+					{
+						"name": "age",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "gender",
+						"type": "varchar"
+					},
+					{
+						"name": "email",
+						"type": "varchar"
+					},
+					{
+						"name": "phone",
+						"type": "varchar"
+					},
+					{
+						"name": "username",
+						"type": "varchar"
+					},
+					{
+						"name": "password",
+						"type": "varchar"
+					},
+					{
+						"name": "birthDate",
+						"type": "varchar"
+					},
+					{
+						"name": "image",
+						"type": "varchar"
+					},
+					{
+						"name": "bloodGroup",
+						"type": "varchar"
+					},
+					{
+						"name": "height",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 2
+					},
+					{
+						"name": "weight",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 2
+					},
+					{
+						"name": "eyeColor",
+						"type": "varchar"
+					},
+					{
+						"name": "color",
+						"type": "varchar"
+					},
+					{
+						"name": "type",
+						"type": "varchar"
+					},
+					{
+						"name": "ip",
+						"type": "varchar"
+					},
+					{
+						"name": "address_address",
+						"type": "varchar"
+					},
+					{
+						"name": "address_city",
+						"type": "varchar"
+					},
+					{
+						"name": "address_state",
+						"type": "varchar"
+					},
+					{
+						"name": "address_stateCode",
+						"type": "varchar"
+					},
+					{
+						"name": "address_postalCode",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "address_coordinates_lat",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 6
+					},
+					{
+						"name": "address_coordinates_lng",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 6
+					},
+					{
+						"name": "address_country",
+						"type": "varchar"
+					},
+					{
+						"name": "macAddress",
+						"type": "varchar"
+					},
+					{
+						"name": "university",
+						"type": "varchar"
+					},
+					{
+						"name": "cardExpire",
+						"type": "varchar"
+					},
+					{
+						"name": "cardNumber",
+						"type": "varchar"
+					},
+					{
+						"name": "cardType",
+						"type": "varchar"
+					},
+					{
+						"name": "currency",
+						"type": "varchar"
+					},
+					{
+						"name": "iban",
+						"type": "varchar"
+					},
+					{
+						"name": "company_department",
+						"type": "varchar"
+					},
+					{
+						"name": "company_name",
+						"type": "varchar"
+					},
+					{
+						"name": "company_title",
+						"type": "varchar"
+					},
+					{
+						"name": "company_address_address",
+						"type": "varchar"
+					},
+					{
+						"name": "company_address_city",
+						"type": "varchar"
+					},
+					{
+						"name": "company_address_state",
+						"type": "varchar"
+					},
+					{
+						"name": "company_address_stateCode",
+						"type": "varchar"
+					},
+					{
+						"name": "company_address_postalCode",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "company_address_coordinates_lat",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 6
+					},
+					{
+						"name": "company_address_coordinates_lng",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 6
+					},
+					{
+						"name": "company_address_country",
+						"type": "varchar"
+					},
+					{
+						"name": "ein",
+						"type": "varchar"
+					},
+					{
+						"name": "ssn",
+						"type": "varchar"
+					},
+					{
+						"name": "userAgent",
+						"type": "varchar"
+					},
+					{
+						"name": "coin",
+						"type": "varchar"
+					},
+					{
+						"name": "wallet",
+						"type": "varchar"
+					},
+					{
+						"name": "network",
+						"type": "varchar"
+					},
+					{
+						"name": "role",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Brown"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_json_to_csv')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "users.csv",
+						"folderPath": "bronze/users",
+						"container": "adb"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "id",
+						"type": "String"
+					},
+					{
+						"name": "firstName",
+						"type": "String"
+					},
+					{
+						"name": "lastName",
+						"type": "String"
+					},
+					{
+						"name": "maidenName",
+						"type": "String"
+					},
+					{
+						"name": "age",
+						"type": "String"
+					},
+					{
+						"name": "gender",
+						"type": "String"
+					},
+					{
+						"name": "email",
+						"type": "String"
+					},
+					{
+						"name": "phone",
+						"type": "String"
+					},
+					{
+						"name": "username",
+						"type": "String"
+					},
+					{
+						"name": "password",
+						"type": "String"
+					},
+					{
+						"name": "birthDate",
+						"type": "String"
+					},
+					{
+						"name": "image",
+						"type": "String"
+					},
+					{
+						"name": "bloodGroup",
+						"type": "String"
+					},
+					{
+						"name": "height",
+						"type": "String"
+					},
+					{
+						"name": "weight",
+						"type": "String"
+					},
+					{
+						"name": "eyeColor",
+						"type": "String"
+					},
+					{
+						"name": "color",
+						"type": "String"
+					},
+					{
+						"name": "type",
+						"type": "String"
+					},
+					{
+						"name": "ip",
+						"type": "String"
+					},
+					{
+						"name": "users'][0]['address_address",
+						"type": "String"
+					},
+					{
+						"name": "users'][0]['address_city",
+						"type": "String"
+					},
+					{
+						"name": "users'][0]['address_state",
+						"type": "String"
+					},
+					{
+						"name": "users'][0]['address_stateCode",
+						"type": "String"
+					},
+					{
+						"name": "users'][0]['address_postalCode",
+						"type": "String"
+					},
+					{
+						"name": "users'][0]['address_coordinates_lat",
+						"type": "String"
+					},
+					{
+						"name": "users'][0]['address_coordinates_lng",
+						"type": "String"
+					},
+					{
+						"name": "users'][0]['address_country",
+						"type": "String"
+					},
+					{
+						"name": "macAddress",
+						"type": "String"
+					},
+					{
+						"name": "university",
+						"type": "String"
+					},
+					{
+						"name": "cardExpire",
+						"type": "String"
+					},
+					{
+						"name": "cardNumber",
+						"type": "String"
+					},
+					{
+						"name": "cardType",
+						"type": "String"
+					},
+					{
+						"name": "currency",
+						"type": "String"
+					},
+					{
+						"name": "iban",
+						"type": "String"
+					},
+					{
+						"name": "department",
+						"type": "String"
+					},
+					{
+						"name": "name",
+						"type": "String"
+					},
+					{
+						"name": "title",
+						"type": "String"
+					},
+					{
+						"name": "users'][0]['company_address_address",
+						"type": "String"
+					},
+					{
+						"name": "users'][0]['company_address_city",
+						"type": "String"
+					},
+					{
+						"name": "users'][0]['company_address_state",
+						"type": "String"
+					},
+					{
+						"name": "users'][0]['company_address_stateCode",
+						"type": "String"
+					},
+					{
+						"name": "users'][0]['company_address_postalCode",
+						"type": "String"
+					},
+					{
+						"name": "users'][0]['company_address_coordinates_lat",
+						"type": "String"
+					},
+					{
+						"name": "users'][0]['company_address_coordinates_lng",
+						"type": "String"
+					},
+					{
+						"name": "users'][0]['company_address_country",
+						"type": "String"
+					},
+					{
+						"name": "ein",
+						"type": "String"
+					},
+					{
+						"name": "ssn",
+						"type": "String"
+					},
+					{
+						"name": "userAgent",
+						"type": "String"
+					},
+					{
+						"name": "coin",
+						"type": "String"
+					},
+					{
+						"name": "wallet",
+						"type": "String"
+					},
+					{
+						"name": "network",
+						"type": "String"
+					},
+					{
+						"name": "role",
+						"type": "String"
+					},
+					{
+						"name": "total",
+						"type": "String"
+					},
+					{
+						"name": "skip",
+						"type": "String"
+					},
+					{
+						"name": "limit",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_users_dummyjson')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_dummyjson",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": "users"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_dummyjson')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/greeneyes')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "firstName",
+						"type": "varchar"
+					},
+					{
+						"name": "lastName",
+						"type": "varchar"
+					},
+					{
+						"name": "maidenName",
+						"type": "varchar"
+					},
+					{
+						"name": "age",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "gender",
+						"type": "varchar"
+					},
+					{
+						"name": "email",
+						"type": "varchar"
+					},
+					{
+						"name": "phone",
+						"type": "varchar"
+					},
+					{
+						"name": "username",
+						"type": "varchar"
+					},
+					{
+						"name": "password",
+						"type": "varchar"
+					},
+					{
+						"name": "birthDate",
+						"type": "varchar"
+					},
+					{
+						"name": "image",
+						"type": "varchar"
+					},
+					{
+						"name": "bloodGroup",
+						"type": "varchar"
+					},
+					{
+						"name": "height",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 2
+					},
+					{
+						"name": "weight",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 2
+					},
+					{
+						"name": "eyeColor",
+						"type": "varchar"
+					},
+					{
+						"name": "color",
+						"type": "varchar"
+					},
+					{
+						"name": "type",
+						"type": "varchar"
+					},
+					{
+						"name": "ip",
+						"type": "varchar"
+					},
+					{
+						"name": "address_address",
+						"type": "varchar"
+					},
+					{
+						"name": "address_city",
+						"type": "varchar"
+					},
+					{
+						"name": "address_state",
+						"type": "varchar"
+					},
+					{
+						"name": "address_stateCode",
+						"type": "varchar"
+					},
+					{
+						"name": "address_postalCode",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "address_coordinates_lat",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 6
+					},
+					{
+						"name": "address_coordinates_lng",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 6
+					},
+					{
+						"name": "address_country",
+						"type": "varchar"
+					},
+					{
+						"name": "macAddress",
+						"type": "varchar"
+					},
+					{
+						"name": "university",
+						"type": "varchar"
+					},
+					{
+						"name": "cardExpire",
+						"type": "varchar"
+					},
+					{
+						"name": "cardNumber",
+						"type": "varchar"
+					},
+					{
+						"name": "cardType",
+						"type": "varchar"
+					},
+					{
+						"name": "currency",
+						"type": "varchar"
+					},
+					{
+						"name": "iban",
+						"type": "varchar"
+					},
+					{
+						"name": "company_department",
+						"type": "varchar"
+					},
+					{
+						"name": "company_name",
+						"type": "varchar"
+					},
+					{
+						"name": "company_title",
+						"type": "varchar"
+					},
+					{
+						"name": "company_address_address",
+						"type": "varchar"
+					},
+					{
+						"name": "company_address_city",
+						"type": "varchar"
+					},
+					{
+						"name": "company_address_state",
+						"type": "varchar"
+					},
+					{
+						"name": "company_address_stateCode",
+						"type": "varchar"
+					},
+					{
+						"name": "company_address_postalCode",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "company_address_coordinates_lat",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 6
+					},
+					{
+						"name": "company_address_coordinates_lng",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 6
+					},
+					{
+						"name": "company_address_country",
+						"type": "varchar"
+					},
+					{
+						"name": "ein",
+						"type": "varchar"
+					},
+					{
+						"name": "ssn",
+						"type": "varchar"
+					},
+					{
+						"name": "userAgent",
+						"type": "varchar"
+					},
+					{
+						"name": "coin",
+						"type": "varchar"
+					},
+					{
+						"name": "wallet",
+						"type": "varchar"
+					},
+					{
+						"name": "network",
+						"type": "varchar"
+					},
+					{
+						"name": "role",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Green"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/hazeleyes')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "firstName",
+						"type": "varchar"
+					},
+					{
+						"name": "lastName",
+						"type": "varchar"
+					},
+					{
+						"name": "maidenName",
+						"type": "varchar"
+					},
+					{
+						"name": "age",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "gender",
+						"type": "varchar"
+					},
+					{
+						"name": "email",
+						"type": "varchar"
+					},
+					{
+						"name": "phone",
+						"type": "varchar"
+					},
+					{
+						"name": "username",
+						"type": "varchar"
+					},
+					{
+						"name": "password",
+						"type": "varchar"
+					},
+					{
+						"name": "birthDate",
+						"type": "varchar"
+					},
+					{
+						"name": "image",
+						"type": "varchar"
+					},
+					{
+						"name": "bloodGroup",
+						"type": "varchar"
+					},
+					{
+						"name": "height",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 2
+					},
+					{
+						"name": "weight",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 2
+					},
+					{
+						"name": "eyeColor",
+						"type": "varchar"
+					},
+					{
+						"name": "color",
+						"type": "varchar"
+					},
+					{
+						"name": "type",
+						"type": "varchar"
+					},
+					{
+						"name": "ip",
+						"type": "varchar"
+					},
+					{
+						"name": "address_address",
+						"type": "varchar"
+					},
+					{
+						"name": "address_city",
+						"type": "varchar"
+					},
+					{
+						"name": "address_state",
+						"type": "varchar"
+					},
+					{
+						"name": "address_stateCode",
+						"type": "varchar"
+					},
+					{
+						"name": "address_postalCode",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "address_coordinates_lat",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 6
+					},
+					{
+						"name": "address_coordinates_lng",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 6
+					},
+					{
+						"name": "address_country",
+						"type": "varchar"
+					},
+					{
+						"name": "macAddress",
+						"type": "varchar"
+					},
+					{
+						"name": "university",
+						"type": "varchar"
+					},
+					{
+						"name": "cardExpire",
+						"type": "varchar"
+					},
+					{
+						"name": "cardNumber",
+						"type": "varchar"
+					},
+					{
+						"name": "cardType",
+						"type": "varchar"
+					},
+					{
+						"name": "currency",
+						"type": "varchar"
+					},
+					{
+						"name": "iban",
+						"type": "varchar"
+					},
+					{
+						"name": "company_department",
+						"type": "varchar"
+					},
+					{
+						"name": "company_name",
+						"type": "varchar"
+					},
+					{
+						"name": "company_title",
+						"type": "varchar"
+					},
+					{
+						"name": "company_address_address",
+						"type": "varchar"
+					},
+					{
+						"name": "company_address_city",
+						"type": "varchar"
+					},
+					{
+						"name": "company_address_state",
+						"type": "varchar"
+					},
+					{
+						"name": "company_address_stateCode",
+						"type": "varchar"
+					},
+					{
+						"name": "company_address_postalCode",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "company_address_coordinates_lat",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 6
+					},
+					{
+						"name": "company_address_coordinates_lng",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 6
+					},
+					{
+						"name": "company_address_country",
+						"type": "varchar"
+					},
+					{
+						"name": "ein",
+						"type": "varchar"
+					},
+					{
+						"name": "ssn",
+						"type": "varchar"
+					},
+					{
+						"name": "userAgent",
+						"type": "varchar"
+					},
+					{
+						"name": "coin",
+						"type": "varchar"
+					},
+					{
+						"name": "wallet",
+						"type": "varchar"
+					},
+					{
+						"name": "network",
+						"type": "varchar"
+					},
+					{
+						"name": "role",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Hazel"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/json_to_csv')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "users.csv",
+						"folderPath": "bronze/users",
 						"container": "adb"
 					},
 					"columnDelimiter": ",",
@@ -532,6 +2601,1477 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabaseAllTables')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('AzureSqlDatabaseAllTables_properties_typeProperties_server')]",
+					"database": "[parameters('AzureSqlDatabaseAllTables_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('AzureSqlDatabaseAllTables_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('AzureSqlDatabaseAllTables_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_dummyjson')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "retrieves json output from dummyjson url",
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('ls_dummyjson_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflow1')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "ds_json_to_csv",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "greeneyes",
+								"type": "DatasetReference"
+							},
+							"name": "green"
+						},
+						{
+							"dataset": {
+								"referenceName": "browneyes",
+								"type": "DatasetReference"
+							},
+							"name": "brown"
+						},
+						{
+							"dataset": {
+								"referenceName": "blueeyes",
+								"type": "DatasetReference"
+							},
+							"name": "blue"
+						},
+						{
+							"dataset": {
+								"referenceName": "hazeleyes",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "cast1"
+						},
+						{
+							"name": "split1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          id as string,",
+						"          firstName as string,",
+						"          lastName as string,",
+						"          maidenName as string,",
+						"          age as string,",
+						"          gender as string,",
+						"          email as string,",
+						"          phone as string,",
+						"          username as string,",
+						"          password as string,",
+						"          birthDate as string,",
+						"          image as string,",
+						"          bloodGroup as string,",
+						"          height as string,",
+						"          weight as string,",
+						"          eyeColor as string,",
+						"          color as string,",
+						"          type as string,",
+						"          ip as string,",
+						"          {users'][0]['address_address} as string,",
+						"          {users'][0]['address_city} as string,",
+						"          {users'][0]['address_state} as string,",
+						"          {users'][0]['address_stateCode} as string,",
+						"          {users'][0]['address_postalCode} as string,",
+						"          {users'][0]['address_coordinates_lat} as string,",
+						"          {users'][0]['address_coordinates_lng} as string,",
+						"          {users'][0]['address_country} as string,",
+						"          macAddress as string,",
+						"          university as string,",
+						"          cardExpire as string,",
+						"          cardNumber as string,",
+						"          cardType as string,",
+						"          currency as string,",
+						"          iban as string,",
+						"          department as string,",
+						"          name as string,",
+						"          title as string,",
+						"          {users'][0]['company_address_address} as string,",
+						"          {users'][0]['company_address_city} as string,",
+						"          {users'][0]['company_address_state} as string,",
+						"          {users'][0]['company_address_stateCode} as string,",
+						"          {users'][0]['company_address_postalCode} as string,",
+						"          {users'][0]['company_address_coordinates_lat} as string,",
+						"          {users'][0]['company_address_coordinates_lng} as string,",
+						"          {users'][0]['company_address_country} as string,",
+						"          ein as string,",
+						"          ssn as string,",
+						"          userAgent as string,",
+						"          coin as string,",
+						"          wallet as string,",
+						"          network as string,",
+						"          role as string,",
+						"          total as string,",
+						"          skip as string,",
+						"          limit as string",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: true,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"source1 cast(output(",
+						"          id as integer,",
+						"          firstName as string,",
+						"          lastName as string,",
+						"          maidenName as string,",
+						"          age as integer,",
+						"          gender as string,",
+						"          email as string,",
+						"          phone as string,",
+						"          username as string,",
+						"          password as string,",
+						"          birthDate as string,",
+						"          image as string,",
+						"          bloodGroup as string,",
+						"          height as double,",
+						"          weight as double,",
+						"          eyeColor as string,",
+						"          color as string,",
+						"          type as string,",
+						"          ip as string,",
+						"          {users'][0]['address_address} as string,",
+						"          {users'][0]['address_city} as string,",
+						"          {users'][0]['address_state} as string,",
+						"          {users'][0]['address_stateCode} as string,",
+						"          {users'][0]['address_postalCode} as integer,",
+						"          {users'][0]['address_coordinates_lat} as double,",
+						"          {users'][0]['address_coordinates_lng} as double,",
+						"          {users'][0]['address_country} as string,",
+						"          macAddress as string,",
+						"          university as string,",
+						"          cardExpire as string,",
+						"          cardNumber as string,",
+						"          cardType as string,",
+						"          currency as string,",
+						"          iban as string,",
+						"          department as string,",
+						"          name as string,",
+						"          title as string,",
+						"          {users'][0]['company_address_address} as string,",
+						"          {users'][0]['company_address_city} as string,",
+						"          {users'][0]['company_address_state} as string,",
+						"          {users'][0]['company_address_stateCode} as string,",
+						"          {users'][0]['company_address_postalCode} as integer,",
+						"          {users'][0]['company_address_coordinates_lat} as double,",
+						"          {users'][0]['company_address_coordinates_lng} as double,",
+						"          {users'][0]['company_address_country} as string,",
+						"          ein as string,",
+						"          ssn as string,",
+						"          userAgent as string,",
+						"          coin as string,",
+						"          wallet as string,",
+						"          network as string,",
+						"          role as string,",
+						"          total as integer,",
+						"          skip as integer,",
+						"          limit as integer",
+						"     ),",
+						"     errors: true) ~> cast1",
+						"cast1 split(eyeColor=='Green',",
+						"     eyeColor=='Brown',",
+						"     eyeColor=='Blue',",
+						"     eyeColor=='Hazel',",
+						"     disjoint: false) ~> split1@(Green, Brown, Blue, Hazel)",
+						"split1@Green sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          id as integer,",
+						"          firstName as string,",
+						"          lastName as string,",
+						"          maidenName as string,",
+						"          age as integer,",
+						"          gender as string,",
+						"          email as string,",
+						"          phone as string,",
+						"          username as string,",
+						"          password as string,",
+						"          birthDate as string,",
+						"          image as string,",
+						"          bloodGroup as string,",
+						"          height as decimal(10,2),",
+						"          weight as decimal(10,2),",
+						"          eyeColor as string,",
+						"          color as string,",
+						"          type as string,",
+						"          ip as string,",
+						"          address_address as string,",
+						"          address_city as string,",
+						"          address_state as string,",
+						"          address_stateCode as string,",
+						"          address_postalCode as integer,",
+						"          address_coordinates_lat as decimal(10,6),",
+						"          address_coordinates_lng as decimal(10,6),",
+						"          address_country as string,",
+						"          macAddress as string,",
+						"          university as string,",
+						"          cardExpire as string,",
+						"          cardNumber as string,",
+						"          cardType as string,",
+						"          currency as string,",
+						"          iban as string,",
+						"          company_department as string,",
+						"          company_name as string,",
+						"          company_title as string,",
+						"          company_address_address as string,",
+						"          company_address_city as string,",
+						"          company_address_state as string,",
+						"          company_address_stateCode as string,",
+						"          company_address_postalCode as integer,",
+						"          company_address_coordinates_lat as decimal(10,6),",
+						"          company_address_coordinates_lng as decimal(10,6),",
+						"          company_address_country as string,",
+						"          ein as string,",
+						"          ssn as string,",
+						"          userAgent as string,",
+						"          coin as string,",
+						"          wallet as string,",
+						"          network as string,",
+						"          role as string",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> green",
+						"split1@Brown sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          id as integer,",
+						"          firstName as string,",
+						"          lastName as string,",
+						"          maidenName as string,",
+						"          age as integer,",
+						"          gender as string,",
+						"          email as string,",
+						"          phone as string,",
+						"          username as string,",
+						"          password as string,",
+						"          birthDate as string,",
+						"          image as string,",
+						"          bloodGroup as string,",
+						"          height as decimal(10,2),",
+						"          weight as decimal(10,2),",
+						"          eyeColor as string,",
+						"          color as string,",
+						"          type as string,",
+						"          ip as string,",
+						"          address_address as string,",
+						"          address_city as string,",
+						"          address_state as string,",
+						"          address_stateCode as string,",
+						"          address_postalCode as integer,",
+						"          address_coordinates_lat as decimal(10,6),",
+						"          address_coordinates_lng as decimal(10,6),",
+						"          address_country as string,",
+						"          macAddress as string,",
+						"          university as string,",
+						"          cardExpire as string,",
+						"          cardNumber as string,",
+						"          cardType as string,",
+						"          currency as string,",
+						"          iban as string,",
+						"          company_department as string,",
+						"          company_name as string,",
+						"          company_title as string,",
+						"          company_address_address as string,",
+						"          company_address_city as string,",
+						"          company_address_state as string,",
+						"          company_address_stateCode as string,",
+						"          company_address_postalCode as integer,",
+						"          company_address_coordinates_lat as decimal(10,6),",
+						"          company_address_coordinates_lng as decimal(10,6),",
+						"          company_address_country as string,",
+						"          ein as string,",
+						"          ssn as string,",
+						"          userAgent as string,",
+						"          coin as string,",
+						"          wallet as string,",
+						"          network as string,",
+						"          role as string",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> brown",
+						"split1@Blue sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          id as integer,",
+						"          firstName as string,",
+						"          lastName as string,",
+						"          maidenName as string,",
+						"          age as integer,",
+						"          gender as string,",
+						"          email as string,",
+						"          phone as string,",
+						"          username as string,",
+						"          password as string,",
+						"          birthDate as string,",
+						"          image as string,",
+						"          bloodGroup as string,",
+						"          height as decimal(10,2),",
+						"          weight as decimal(10,2),",
+						"          eyeColor as string,",
+						"          color as string,",
+						"          type as string,",
+						"          ip as string,",
+						"          address_address as string,",
+						"          address_city as string,",
+						"          address_state as string,",
+						"          address_stateCode as string,",
+						"          address_postalCode as integer,",
+						"          address_coordinates_lat as decimal(10,6),",
+						"          address_coordinates_lng as decimal(10,6),",
+						"          address_country as string,",
+						"          macAddress as string,",
+						"          university as string,",
+						"          cardExpire as string,",
+						"          cardNumber as string,",
+						"          cardType as string,",
+						"          currency as string,",
+						"          iban as string,",
+						"          company_department as string,",
+						"          company_name as string,",
+						"          company_title as string,",
+						"          company_address_address as string,",
+						"          company_address_city as string,",
+						"          company_address_state as string,",
+						"          company_address_stateCode as string,",
+						"          company_address_postalCode as integer,",
+						"          company_address_coordinates_lat as decimal(10,6),",
+						"          company_address_coordinates_lng as decimal(10,6),",
+						"          company_address_country as string,",
+						"          ein as string,",
+						"          ssn as string,",
+						"          userAgent as string,",
+						"          coin as string,",
+						"          wallet as string,",
+						"          network as string,",
+						"          role as string",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> blue",
+						"split1@Hazel sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          id as integer,",
+						"          firstName as string,",
+						"          lastName as string,",
+						"          maidenName as string,",
+						"          age as integer,",
+						"          gender as string,",
+						"          email as string,",
+						"          phone as string,",
+						"          username as string,",
+						"          password as string,",
+						"          birthDate as string,",
+						"          image as string,",
+						"          bloodGroup as string,",
+						"          height as decimal(10,2),",
+						"          weight as decimal(10,2),",
+						"          eyeColor as string,",
+						"          color as string,",
+						"          type as string,",
+						"          ip as string,",
+						"          address_address as string,",
+						"          address_city as string,",
+						"          address_state as string,",
+						"          address_stateCode as string,",
+						"          address_postalCode as integer,",
+						"          address_coordinates_lat as decimal(10,6),",
+						"          address_coordinates_lng as decimal(10,6),",
+						"          address_country as string,",
+						"          macAddress as string,",
+						"          university as string,",
+						"          cardExpire as string,",
+						"          cardNumber as string,",
+						"          cardType as string,",
+						"          currency as string,",
+						"          iban as string,",
+						"          company_department as string,",
+						"          company_name as string,",
+						"          company_title as string,",
+						"          company_address_address as string,",
+						"          company_address_city as string,",
+						"          company_address_state as string,",
+						"          company_address_stateCode as string,",
+						"          company_address_postalCode as integer,",
+						"          company_address_coordinates_lat as decimal(10,6),",
+						"          company_address_coordinates_lng as decimal(10,6),",
+						"          company_address_country as string,",
+						"          ein as string,",
+						"          ssn as string,",
+						"          userAgent as string,",
+						"          coin as string,",
+						"          wallet as string,",
+						"          network as string,",
+						"          role as string",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_json_to_csv')]",
+				"[concat(variables('factoryId'), '/datasets/greeneyes')]",
+				"[concat(variables('factoryId'), '/datasets/browneyes')]",
+				"[concat(variables('factoryId'), '/datasets/blueeyes')]",
+				"[concat(variables('factoryId'), '/datasets/hazeleyes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_ingest_orders_incremental_with_watermark')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "cp_api_to_json",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Set variable1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "GET"
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings",
+									"copyBehavior": "PreserveHierarchy"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "ds_users_dummyjson",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "api_to_json_sink_dummyjson",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "cp_json_to_csv",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "cp_api_to_json",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings",
+									"copyBehavior": "PreserveHierarchy"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "[['id']"
+										},
+										"sink": {
+											"name": "id",
+											"type": "Int64"
+										}
+									},
+									{
+										"source": {
+											"path": "[['firstName']"
+										},
+										"sink": {
+											"name": "firstName"
+										}
+									},
+									{
+										"source": {
+											"path": "[['lastName']"
+										},
+										"sink": {
+											"name": "lastName"
+										}
+									},
+									{
+										"source": {
+											"path": "[['maidenName']"
+										},
+										"sink": {
+											"name": "maidenName"
+										}
+									},
+									{
+										"source": {
+											"path": "[['age']"
+										},
+										"sink": {
+											"name": "age"
+										}
+									},
+									{
+										"source": {
+											"path": "[['gender']"
+										},
+										"sink": {
+											"name": "gender"
+										}
+									},
+									{
+										"source": {
+											"path": "[['email']"
+										},
+										"sink": {
+											"name": "email"
+										}
+									},
+									{
+										"source": {
+											"path": "[['phone']"
+										},
+										"sink": {
+											"name": "phone"
+										}
+									},
+									{
+										"source": {
+											"path": "[['username']"
+										},
+										"sink": {
+											"name": "username"
+										}
+									},
+									{
+										"source": {
+											"path": "[['password']"
+										},
+										"sink": {
+											"name": "password"
+										}
+									},
+									{
+										"source": {
+											"path": "[['birthDate']"
+										},
+										"sink": {
+											"name": "birthDate"
+										}
+									},
+									{
+										"source": {
+											"path": "[['image']"
+										},
+										"sink": {
+											"name": "image"
+										}
+									},
+									{
+										"source": {
+											"path": "[['bloodGroup']"
+										},
+										"sink": {
+											"name": "bloodGroup"
+										}
+									},
+									{
+										"source": {
+											"path": "[['height']"
+										},
+										"sink": {
+											"name": "height"
+										}
+									},
+									{
+										"source": {
+											"path": "[['weight']"
+										},
+										"sink": {
+											"name": "weight"
+										}
+									},
+									{
+										"source": {
+											"path": "[['eyeColor']"
+										},
+										"sink": {
+											"name": "eyeColor"
+										}
+									},
+									{
+										"source": {
+											"path": "[['hair']['color']"
+										},
+										"sink": {
+											"name": "color"
+										}
+									},
+									{
+										"source": {
+											"path": "[['hair']['type']"
+										},
+										"sink": {
+											"name": "type"
+										}
+									},
+									{
+										"source": {
+											"path": "[['ip']"
+										},
+										"sink": {
+											"name": "ip"
+										}
+									},
+									{
+										"source": {
+											"path": "[['address']['address']"
+										},
+										"sink": {
+											"name": "users'][0]['address_address"
+										}
+									},
+									{
+										"source": {
+											"path": "[['address']['city']"
+										},
+										"sink": {
+											"name": "users'][0]['address_city"
+										}
+									},
+									{
+										"source": {
+											"path": "[['address']['state']"
+										},
+										"sink": {
+											"name": "users'][0]['address_state"
+										}
+									},
+									{
+										"source": {
+											"path": "[['address']['stateCode']"
+										},
+										"sink": {
+											"name": "users'][0]['address_stateCode"
+										}
+									},
+									{
+										"source": {
+											"path": "[['address']['postalCode']"
+										},
+										"sink": {
+											"name": "users'][0]['address_postalCode"
+										}
+									},
+									{
+										"source": {
+											"path": "[['address']['coordinates']['lat']"
+										},
+										"sink": {
+											"name": "users'][0]['address_coordinates_lat"
+										}
+									},
+									{
+										"source": {
+											"path": "[['address']['coordinates']['lng']"
+										},
+										"sink": {
+											"name": "users'][0]['address_coordinates_lng"
+										}
+									},
+									{
+										"source": {
+											"path": "[['address']['country']"
+										},
+										"sink": {
+											"name": "users'][0]['address_country"
+										}
+									},
+									{
+										"source": {
+											"path": "[['macAddress']"
+										},
+										"sink": {
+											"name": "macAddress"
+										}
+									},
+									{
+										"source": {
+											"path": "[['university']"
+										},
+										"sink": {
+											"name": "university"
+										}
+									},
+									{
+										"source": {
+											"path": "[['bank']['cardExpire']"
+										},
+										"sink": {
+											"name": "cardExpire"
+										}
+									},
+									{
+										"source": {
+											"path": "[['bank']['cardNumber']"
+										},
+										"sink": {
+											"name": "cardNumber"
+										}
+									},
+									{
+										"source": {
+											"path": "[['bank']['cardType']"
+										},
+										"sink": {
+											"name": "cardType"
+										}
+									},
+									{
+										"source": {
+											"path": "[['bank']['currency']"
+										},
+										"sink": {
+											"name": "currency"
+										}
+									},
+									{
+										"source": {
+											"path": "[['bank']['iban']"
+										},
+										"sink": {
+											"name": "iban"
+										}
+									},
+									{
+										"source": {
+											"path": "[['company']['department']"
+										},
+										"sink": {
+											"name": "department"
+										}
+									},
+									{
+										"source": {
+											"path": "[['company']['name']"
+										},
+										"sink": {
+											"name": "name"
+										}
+									},
+									{
+										"source": {
+											"path": "[['company']['title']"
+										},
+										"sink": {
+											"name": "title"
+										}
+									},
+									{
+										"source": {
+											"path": "[['company']['address']['address']"
+										},
+										"sink": {
+											"name": "users'][0]['company_address_address"
+										}
+									},
+									{
+										"source": {
+											"path": "[['company']['address']['city']"
+										},
+										"sink": {
+											"name": "users'][0]['company_address_city"
+										}
+									},
+									{
+										"source": {
+											"path": "[['company']['address']['state']"
+										},
+										"sink": {
+											"name": "users'][0]['company_address_state"
+										}
+									},
+									{
+										"source": {
+											"path": "[['company']['address']['stateCode']"
+										},
+										"sink": {
+											"name": "users'][0]['company_address_stateCode"
+										}
+									},
+									{
+										"source": {
+											"path": "[['company']['address']['postalCode']"
+										},
+										"sink": {
+											"name": "users'][0]['company_address_postalCode"
+										}
+									},
+									{
+										"source": {
+											"path": "[['company']['address']['coordinates']['lat']"
+										},
+										"sink": {
+											"name": "users'][0]['company_address_coordinates_lat"
+										}
+									},
+									{
+										"source": {
+											"path": "[['company']['address']['coordinates']['lng']"
+										},
+										"sink": {
+											"name": "users'][0]['company_address_coordinates_lng"
+										}
+									},
+									{
+										"source": {
+											"path": "[['company']['address']['country']"
+										},
+										"sink": {
+											"name": "users'][0]['company_address_country"
+										}
+									},
+									{
+										"source": {
+											"path": "[['ein']"
+										},
+										"sink": {
+											"name": "ein"
+										}
+									},
+									{
+										"source": {
+											"path": "[['ssn']"
+										},
+										"sink": {
+											"name": "ssn"
+										}
+									},
+									{
+										"source": {
+											"path": "[['userAgent']"
+										},
+										"sink": {
+											"name": "userAgent"
+										}
+									},
+									{
+										"source": {
+											"path": "[['crypto']['coin']"
+										},
+										"sink": {
+											"name": "coin"
+										}
+									},
+									{
+										"source": {
+											"path": "[['crypto']['wallet']"
+										},
+										"sink": {
+											"name": "wallet"
+										}
+									},
+									{
+										"source": {
+											"path": "[['crypto']['network']"
+										},
+										"sink": {
+											"name": "network"
+										}
+									},
+									{
+										"source": {
+											"path": "[['role']"
+										},
+										"sink": {
+											"name": "role"
+										}
+									},
+									{
+										"source": {
+											"path": "$['total']"
+										},
+										"sink": {
+											"name": "total"
+										}
+									},
+									{
+										"source": {
+											"path": "$['skip']"
+										},
+										"sink": {
+											"name": "skip"
+										}
+									},
+									{
+										"source": {
+											"path": "$['limit']"
+										},
+										"sink": {
+											"name": "limit"
+										}
+									}
+								],
+								"collectionReference": "$['users']"
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "api_to_json_sink_dummyjson",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_json_to_csv",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Get Waternark",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT LastProcessedId FROM dbo.ETL_Watermark\nWHERE TargetTable = 'Users'",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "GetWatermark",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						}
+					},
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Get Waternark",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "watermark",
+							"value": {
+								"value": "@activity('Get Waternark').output.firstRow.LastProcessedId",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "CSV_to_SQL",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "Script1_copy1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_csv_to_sql",
+								"type": "DataFlowReference",
+								"parameters": {
+									"p_watermark": {
+										"value": "@int(variables('watermark'))",
+										"type": "Expression"
+									}
+								},
+								"datasetParameters": {
+									"source1": {},
+									"sink1": {}
+								},
+								"linkedServiceParameters": {}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					},
+					{
+						"name": "GetMaxId",
+						"type": "Lookup",
+						"dependsOn": [
+							{
+								"activity": "CSV_to_SQL",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT MAX(id) AS MaxId\nFROM dbo.Users;",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "GetWatermark",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						}
+					},
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "GetMaxId",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "AzureSqlDatabase1",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"parameters": [
+										{
+											"name": "MaxId",
+											"type": "Int32",
+											"value": {
+												"value": "@activity('GetMaxId').output.firstRow.MaxId",
+												"type": "Expression"
+											},
+											"direction": "Input"
+										}
+									],
+									"type": "Query",
+									"text": "UPDATE dbo.ETL_Watermark\nSET LastProcessedId = @MaxId\nWHERE TargetTable = 'Users';"
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Script1_copy1",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "cp_json_to_csv",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "AzureSqlDatabase1",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": "TRUNCATE TABLE dbo.Blue;\nTRUNCATE TABLE dbo.Brown;\nTRUNCATE TABLE dbo.Green;\nTRUNCATE TABLE dbo.Hazel;"
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"watermark": {
+						"type": "Integer"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_users_dummyjson')]",
+				"[concat(variables('factoryId'), '/datasets/api_to_json_sink_dummyjson')]",
+				"[concat(variables('factoryId'), '/datasets/ds_json_to_csv')]",
+				"[concat(variables('factoryId'), '/datasets/GetWatermark')]",
+				"[concat(variables('factoryId'), '/dataflows/df_csv_to_sql')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/GetWatermark')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_csv_to_sql')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "ds_json_to_csv",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "UsersSink",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "filter1"
+						},
+						{
+							"name": "aggregate1"
+						}
+					],
+					"scriptLines": [
+						"parameters{",
+						"     p_watermark as integer",
+						"}",
+						"source(output(",
+						"          id as integer,",
+						"          firstName as string,",
+						"          lastName as string,",
+						"          maidenName as string,",
+						"          age as short,",
+						"          gender as string,",
+						"          email as string,",
+						"          phone as string,",
+						"          username as string,",
+						"          password as string,",
+						"          birthDate as date,",
+						"          image as string,",
+						"          bloodGroup as string,",
+						"          height as double,",
+						"          weight as double,",
+						"          eyeColor as string,",
+						"          color as string,",
+						"          type as string,",
+						"          ip as string,",
+						"          {users'][0]['address_address} as string,",
+						"          {users'][0]['address_city} as string,",
+						"          {users'][0]['address_state} as string,",
+						"          {users'][0]['address_stateCode} as string,",
+						"          {users'][0]['address_postalCode} as integer,",
+						"          {users'][0]['address_coordinates_lat} as double,",
+						"          {users'][0]['address_coordinates_lng} as double,",
+						"          {users'][0]['address_country} as string,",
+						"          macAddress as string,",
+						"          university as string,",
+						"          cardExpire as string,",
+						"          cardNumber as long,",
+						"          cardType as string,",
+						"          currency as string,",
+						"          iban as string,",
+						"          department as string,",
+						"          name as string,",
+						"          title as string,",
+						"          {users'][0]['company_address_address} as string,",
+						"          {users'][0]['company_address_city} as string,",
+						"          {users'][0]['company_address_state} as string,",
+						"          {users'][0]['company_address_stateCode} as string,",
+						"          {users'][0]['company_address_postalCode} as integer,",
+						"          {users'][0]['company_address_coordinates_lat} as double,",
+						"          {users'][0]['company_address_coordinates_lng} as double,",
+						"          {users'][0]['company_address_country} as string,",
+						"          ein as string,",
+						"          ssn as string,",
+						"          userAgent as string,",
+						"          coin as string,",
+						"          wallet as string,",
+						"          network as string,",
+						"          role as string,",
+						"          total as short,",
+						"          skip as boolean,",
+						"          limit as short",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: true,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"source1 filter(id > $p_watermark) ~> filter1",
+						"filter1 aggregate(groupBy(id),",
+						"     firstName = first(firstName),",
+						"          lastName = first(lastName),",
+						"          gender = first(gender),",
+						"          eyeColor = first(eyeColor),",
+						"          birthDate = first(birthDate)) ~> aggregate1",
+						"aggregate1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          id as integer,",
+						"          firstName as string,",
+						"          lastName as string,",
+						"          gender as string,",
+						"          eyeColor as string,",
+						"          birthDate as date",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_json_to_csv')]",
+				"[concat(variables('factoryId'), '/datasets/UsersSink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/UsersSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "firstName",
+						"type": "varchar"
+					},
+					{
+						"name": "lastName",
+						"type": "varchar"
+					},
+					{
+						"name": "gender",
+						"type": "varchar"
+					},
+					{
+						"name": "eyeColor",
+						"type": "varchar"
+					},
+					{
+						"name": "birthDate",
+						"type": "date"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Users"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
 		}
 	]
 }

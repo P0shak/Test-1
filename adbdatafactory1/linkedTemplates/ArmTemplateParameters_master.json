@@ -11,6 +11,9 @@
 		"AzureSqlDatabase1_password": {
 			"value": ""
 		},
+		"AzureSqlDatabaseAllTables_password": {
+			"value": ""
+		},
 		"AzureSqlDatabase1_properties_typeProperties_server": {
 			"value": "adbsagarsoft.database.windows.net"
 		},
@@ -19,6 +22,18 @@
 		},
 		"AzureSqlDatabase1_properties_typeProperties_userName": {
 			"value": "adbadmin"
+		},
+		"AzureSqlDatabaseAllTables_properties_typeProperties_server": {
+			"value": "adbsagarsoft.database.windows.net"
+		},
+		"AzureSqlDatabaseAllTables_properties_typeProperties_database": {
+			"value": "adb-database"
+		},
+		"AzureSqlDatabaseAllTables_properties_typeProperties_userName": {
+			"value": "adbadmin"
+		},
+		"ls_dummyjson_properties_typeProperties_url": {
+			"value": "https://dummyjson.com"
 		},
 		"containerUri": {
 			"value": ""

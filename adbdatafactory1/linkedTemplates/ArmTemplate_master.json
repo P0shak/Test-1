@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'AzureSqlDatabase1'"
 		},
+		"AzureSqlDatabaseAllTables_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'AzureSqlDatabaseAllTables'"
+		},
 		"AzureSqlDatabase1_properties_typeProperties_server": {
 			"type": "string",
 			"defaultValue": "adbsagarsoft.database.windows.net"
@@ -26,6 +30,22 @@
 		"AzureSqlDatabase1_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "adbadmin"
+		},
+		"AzureSqlDatabaseAllTables_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "adbsagarsoft.database.windows.net"
+		},
+		"AzureSqlDatabaseAllTables_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "adb-database"
+		},
+		"AzureSqlDatabaseAllTables_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adbadmin"
+		},
+		"ls_dummyjson_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://dummyjson.com"
 		},
 		"containerUri": {
 			"type": "string",
@@ -60,6 +80,9 @@
 					"AzureSqlDatabase1_password": {
 						"value": "[parameters('AzureSqlDatabase1_password')]"
 					},
+					"AzureSqlDatabaseAllTables_password": {
+						"value": "[parameters('AzureSqlDatabaseAllTables_password')]"
+					},
 					"AzureSqlDatabase1_properties_typeProperties_server": {
 						"value": "[parameters('AzureSqlDatabase1_properties_typeProperties_server')]"
 					},
@@ -68,10 +91,42 @@
 					},
 					"AzureSqlDatabase1_properties_typeProperties_userName": {
 						"value": "[parameters('AzureSqlDatabase1_properties_typeProperties_userName')]"
+					},
+					"AzureSqlDatabaseAllTables_properties_typeProperties_server": {
+						"value": "[parameters('AzureSqlDatabaseAllTables_properties_typeProperties_server')]"
+					},
+					"AzureSqlDatabaseAllTables_properties_typeProperties_database": {
+						"value": "[parameters('AzureSqlDatabaseAllTables_properties_typeProperties_database')]"
+					},
+					"AzureSqlDatabaseAllTables_properties_typeProperties_userName": {
+						"value": "[parameters('AzureSqlDatabaseAllTables_properties_typeProperties_userName')]"
+					},
+					"ls_dummyjson_properties_typeProperties_url": {
+						"value": "[parameters('ls_dummyjson_properties_typeProperties_url')]"
 					}
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "adbdatafactory1_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'adbdatafactory1_ArmTemplate_0')]"
+			]
 		}
 	]
 }
