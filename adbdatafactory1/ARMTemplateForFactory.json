@@ -1688,6 +1688,41 @@
 							],
 							"scriptBlockExecutionTimeout": "02:00:00"
 						}
+					},
+					{
+						"name": "Fail1",
+						"type": "Fail",
+						"dependsOn": [
+							{
+								"activity": "GetMaxId",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "CSV_to_SQL",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "cp_json_to_csv",
+								"dependencyConditions": [
+									"Failed"
+								]
+							},
+							{
+								"activity": "cp_api_to_json",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"message": "CSV/SQL ingestion failed. Pipeline execution stopped.",
+							"errorCode": "ETL_001"
+						}
 					}
 				],
 				"policy": {
