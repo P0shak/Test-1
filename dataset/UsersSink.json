@@ -5,6 +5,9 @@
 			"referenceName": "AzureSqlDatabase1",
 			"type": "LinkedServiceReference"
 		},
+		"folder": {
+			"name": "Assessment 2 Week 2 Datasets"
+		},
 		"annotations": [],
 		"type": "AzureSqlTable",
 		"schema": [
