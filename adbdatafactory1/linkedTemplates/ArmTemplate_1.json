@@ -13,7 +13,7 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/UsersSink')]",
+			"name": "[concat(parameters('factoryName'), '/metadatalookupdataset')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -25,34 +25,38 @@
 				"type": "AzureSqlTable",
 				"schema": [
 					{
-						"name": "id",
+						"name": "MetadataID",
 						"type": "int",
 						"precision": 10
 					},
 					{
-						"name": "firstName",
+						"name": "SourceSchema",
 						"type": "varchar"
 					},
 					{
-						"name": "lastName",
+						"name": "SourceTable",
 						"type": "varchar"
 					},
 					{
-						"name": "gender",
+						"name": "TargetPath",
 						"type": "varchar"
 					},
 					{
-						"name": "eyeColor",
+						"name": "LoadType",
 						"type": "varchar"
 					},
 					{
-						"name": "birthDate",
-						"type": "date"
+						"name": "WatermarkColumn",
+						"type": "varchar"
+					},
+					{
+						"name": "IsActive",
+						"type": "bit"
 					}
 				],
 				"typeProperties": {
 					"schema": "dbo",
-					"table": "Users"
+					"table": "ETL_Metadata"
 				}
 			},
 			"dependsOn": []
@@ -264,7 +268,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/metadatalookupdataset')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/poshak')]",
@@ -304,7 +310,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/metadatalookupdataset')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/dataflow1')]",
@@ -870,9 +878,7 @@
 					]
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/UsersSink')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/pl_ingest_orders_incremental')]",
@@ -2171,8 +2177,7 @@
 								"datasetParameters": {
 									"source1": {},
 									"sink1": {}
-								},
-								"linkedServiceParameters": {}
+								}
 							},
 							"staging": {},
 							"compute": {
