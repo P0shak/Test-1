@@ -1,0 +1,124 @@
+{
+	"name": "df_csv_to_sql",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_json_to_csv",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "UsersSink",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "aggregate1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     p_watermark as integer",
+				"}",
+				"source(output(",
+				"          id as integer,",
+				"          firstName as string,",
+				"          lastName as string,",
+				"          maidenName as string,",
+				"          age as short,",
+				"          gender as string,",
+				"          email as string,",
+				"          phone as string,",
+				"          username as string,",
+				"          password as string,",
+				"          birthDate as date,",
+				"          image as string,",
+				"          bloodGroup as string,",
+				"          height as double,",
+				"          weight as double,",
+				"          eyeColor as string,",
+				"          color as string,",
+				"          type as string,",
+				"          ip as string,",
+				"          {users'][0]['address_address} as string,",
+				"          {users'][0]['address_city} as string,",
+				"          {users'][0]['address_state} as string,",
+				"          {users'][0]['address_stateCode} as string,",
+				"          {users'][0]['address_postalCode} as integer,",
+				"          {users'][0]['address_coordinates_lat} as double,",
+				"          {users'][0]['address_coordinates_lng} as double,",
+				"          {users'][0]['address_country} as string,",
+				"          macAddress as string,",
+				"          university as string,",
+				"          cardExpire as string,",
+				"          cardNumber as long,",
+				"          cardType as string,",
+				"          currency as string,",
+				"          iban as string,",
+				"          department as string,",
+				"          name as string,",
+				"          title as string,",
+				"          {users'][0]['company_address_address} as string,",
+				"          {users'][0]['company_address_city} as string,",
+				"          {users'][0]['company_address_state} as string,",
+				"          {users'][0]['company_address_stateCode} as string,",
+				"          {users'][0]['company_address_postalCode} as integer,",
+				"          {users'][0]['company_address_coordinates_lat} as double,",
+				"          {users'][0]['company_address_coordinates_lng} as double,",
+				"          {users'][0]['company_address_country} as string,",
+				"          ein as string,",
+				"          ssn as string,",
+				"          userAgent as string,",
+				"          coin as string,",
+				"          wallet as string,",
+				"          network as string,",
+				"          role as string,",
+				"          total as short,",
+				"          skip as boolean,",
+				"          limit as short",
+				"     ),",
+				"     allowSchemaDrift: false,",
+				"     validateSchema: true,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 filter(id > $p_watermark) ~> filter1",
+				"filter1 aggregate(groupBy(id),",
+				"     firstName = first(firstName),",
+				"          lastName = first(lastName),",
+				"          gender = first(gender),",
+				"          eyeColor = first(eyeColor),",
+				"          birthDate = first(birthDate)) ~> aggregate1",
+				"aggregate1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          id as integer,",
+				"          firstName as string,",
+				"          lastName as string,",
+				"          gender as string,",
+				"          eyeColor as string,",
+				"          birthDate as date",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+			]
+		}
+	}
+}
