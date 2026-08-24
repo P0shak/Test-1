@@ -786,7 +786,11 @@
 						]
 					}
 				],
-				"userProperties": []
+				"userProperties": [],
+				"typeProperties": {
+					"message": "CSV/SQL ingestion failed. Pipeline execution stopped.",
+					"errorCode": "ETL_001"
+				}
 			}
 		],
 		"variables": {
