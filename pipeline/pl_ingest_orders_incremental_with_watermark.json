@@ -751,7 +751,7 @@
 					"scripts": [
 						{
 							"type": "Query",
-							"text": "TRUNCATE TABLE dbo.Blue;\nTRUNCATE TABLE dbo.Brown;\nTRUNCATE TABLE dbo.Green;\nTRUNCATE TABLE dbo.Hazel;"
+							"text": "TRUNCATE TABLE dbo.Users;\n"
 						}
 					],
 					"scriptBlockExecutionTimeout": "02:00:00"
