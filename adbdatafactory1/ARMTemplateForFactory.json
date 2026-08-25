@@ -1683,7 +1683,7 @@
 							"scripts": [
 								{
 									"type": "Query",
-									"text": "TRUNCATE TABLE dbo.Blue;\nTRUNCATE TABLE dbo.Brown;\nTRUNCATE TABLE dbo.Green;\nTRUNCATE TABLE dbo.Hazel;"
+									"text": "TRUNCATE TABLE dbo.Users;\n"
 								}
 							],
 							"scriptBlockExecutionTimeout": "02:00:00"
@@ -3548,6 +3548,37 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/trigger1')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "to trigger the pipeline",
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "pl_ingest_orders_incremental_with_watermark",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2026-08-26T05:45:00",
+						"timeZone": "India Standard Time"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/pl_ingest_orders_incremental_with_watermark')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/dataflow1')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -4120,38 +4151,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/ds_json_to_csv')]",
 				"[concat(variables('factoryId'), '/datasets/UsersSink')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/trigger1')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "to trigger the pipeline",
-				"annotations": [],
-				"runtimeState": "Stopped",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "pl_ingest_orders_incremental_with_watermark",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Day",
-						"interval": 1,
-						"startTime": "2026-08-26T05:45:00",
-						"timeZone": "India Standard Time",
-						"schedule": {}
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/pl_ingest_orders_incremental_with_watermark')]"
 			]
 		}
 	]
